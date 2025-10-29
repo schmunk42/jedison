@@ -51,8 +51,26 @@ class Editor {
      */
     this.storedEventListeners = []
 
+    /**
+     * Array to store cleanup callbacks for framework instances (React roots, Vue apps, etc.)
+     * @type {Array<Function>}
+     */
+    this.cleanupCallbacks = []
+
     this.init()
+
+    // Call beforeBuild hook if defined (for framework integration)
+    if (typeof this.beforeBuild === 'function') {
+      this.beforeBuild()
+    }
+
     this.build()
+
+    // Call afterBuild hook if defined (for framework integration)
+    if (typeof this.afterBuild === 'function') {
+      this.afterBuild()
+    }
+
     this.setAttributes()
     this.setReadOnlyAttribute()
     this.addEventListeners()
@@ -392,6 +410,35 @@ class Editor {
   }
 
   /**
+   * Helper method for custom editors to sync value FROM framework component TO Jedison
+   * Useful for React/Vue/Svelte components to update Jedison when component value changes
+   * @param {*} value - The value from the framework component
+   */
+  syncValueToJedison (value) {
+    this.instance.setValue(value)
+  }
+
+  /**
+   * Helper method for custom editors to get current value FROM Jedison
+   * Useful for React/Vue/Svelte components to read current Jedison value
+   * @returns {*} Current instance value
+   */
+  syncValueFromJedison () {
+    return this.instance.getValue()
+  }
+
+  /**
+   * Register a cleanup callback to be called when editor is destroyed
+   * Useful for cleaning up framework instances (React roots, Vue apps, Svelte components, etc.)
+   * @param {Function} callback - Cleanup function to call on destroy
+   */
+  registerCleanup (callback) {
+    if (typeof callback === 'function') {
+      this.cleanupCallbacks.push(callback)
+    }
+  }
+
+  /**
    * Refreshes the JSON data input size to match content
    */
   refreshJsonDataInputSize () {
@@ -421,6 +468,23 @@ class Editor {
    * Destroys the editor
    */
   destroy () {
+    // Call beforeDestroy hook if defined (for framework integration)
+    if (typeof this.beforeDestroy === 'function') {
+      this.beforeDestroy()
+    }
+
+    // Call all registered cleanup callbacks (for framework instances)
+    if (this.cleanupCallbacks && this.cleanupCallbacks.length > 0) {
+      for (const callback of this.cleanupCallbacks) {
+        try {
+          callback()
+        } catch (error) {
+          console.error('Error in cleanup callback:', error)
+        }
+      }
+      this.cleanupCallbacks = []
+    }
+
     if (this.control.container && this.control.container.parentNode) {
       this.control.container.parentNode.removeChild(this.control.container)
     }
@@ -428,6 +492,11 @@ class Editor {
     Object.keys(this).forEach((key) => {
       delete this[key]
     })
+
+    // Call afterDestroy hook if defined (for framework integration)
+    if (typeof this.afterDestroy === 'function') {
+      this.afterDestroy()
+    }
   }
 }
 
