@@ -7,6 +7,7 @@ import Theme from './themes/theme.js'
 import ThemeBootstrap3 from './themes/bootstrap3.js'
 import ThemeBootstrap4 from './themes/bootstrap4.js'
 import ThemeBootstrap5 from './themes/bootstrap5.js'
+import Editor from './editors/editor.js'
 import EditorBoolean from './editors/boolean.js'
 import EditorBooleanRadios from './editors/boolean-radios.js'
 import EditorBooleanSelect from './editors/boolean-select.js'
@@ -35,6 +36,7 @@ import EditorNull from './editors/null.js'
 export default {
   Schema,
   Utils,
+  Editor,
   EditorBoolean,
   EditorBooleanRadios,
   EditorBooleanSelect,
