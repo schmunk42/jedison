@@ -5,13 +5,13 @@ const theme = process.env.THEME || 'barebones'
 Feature('editor')
 
 Scenario('@editor @ready should have class "jedi-ready" when ready', ({ I }) => {
-  I.amOnPage(`playground.html?theme=${theme}`)
+  I.amOnPage(I._getPlaygroundUrl())
   I.selectOption('#examples', 'editors/all')
   I._waitForElement('.jedi-ready')
 })
 
 Scenario('@editor @create should create all kind of editors', ({ I }) => {
-  I.amOnPage(`playground.html?theme=${theme}`)
+  I.amOnPage(I._getPlaygroundUrl())
   I.selectOption('#examples', 'editors/all')
   I._waitForElement('.jedi-ready')
   I._waitForElement('[data-path="#"]')
@@ -43,7 +43,7 @@ Scenario('@editor @create should create all kind of editors', ({ I }) => {
 })
 
 Scenario('@editor @destroy should destroy', ({ I }) => {
-  I.amOnPage(`playground.html?theme=${theme}`)
+  I.amOnPage(I._getPlaygroundUrl())
   I.selectOption('#examples', 'editors/all')
   I._waitForElement('.jedi-ready')
   I._scrollTo('#destroy-editor')
@@ -52,7 +52,7 @@ Scenario('@editor @destroy should destroy', ({ I }) => {
 })
 
 Scenario('@editor should @disable and @enable', ({ I }) => {
-  I.amOnPage(`playground.html?theme=${theme}`)
+  I.amOnPage(I._getPlaygroundUrl())
   I.selectOption('#examples', 'editors/all')
   I._waitForElement('.jedi-ready')
   I._checkOption('[id="enablePropertiesToggle"]')
@@ -73,7 +73,7 @@ Scenario('@editor should @disable and @enable', ({ I }) => {
 })
 
 Scenario('@editor @setValue() should set value', async ({ I }) => {
-  I.amOnPage(`playground.html?theme=${theme}`)
+  I.amOnPage(I._getPlaygroundUrl())
   I.selectOption('#examples', 'editors/all')
   I._waitForElement('.jedi-ready')
   I._scrollTo('#editor-value')
@@ -97,7 +97,7 @@ Scenario('@editor @setValue() should set value', async ({ I }) => {
 })
 
 Scenario('@editor @showErrors should determine if and when validation errors are displayed', async ({ I }) => {
-  I.amOnPage(`playground.html?theme=${theme}`)
+  I.amOnPage(I._getPlaygroundUrl())
   I.selectOption('#examples', 'editors/all')
   I._waitForElement('.jedi-ready')
   I.selectOption('#show-errors', 'always')
@@ -120,7 +120,7 @@ Scenario('@editor @showErrors should determine if and when validation errors are
 })
 
 Scenario('@editor @showValidationErrors should programmatically display validation errors', ({ I }) => {
-  I.amOnPage(`playground.html?theme=${theme}`)
+  I.amOnPage(I._getPlaygroundUrl())
   I._waitForElement('.jedi-ready')
   I.selectOption('#examples', 'validator/const')
   I._waitForElement('.jedi-ready')
@@ -135,7 +135,7 @@ Scenario('@editor @showValidationErrors should programmatically display validati
 })
 
 Scenario('@editor be able to use @translations', ({ I }) => {
-  I.amOnPage(`playground.html?theme=${theme}`)
+  I.amOnPage(I._getPlaygroundUrl())
   I._waitForElement('.jedi-ready')
   I.selectOption('#examples', 'validator/const')
   I._waitForElement('.jedi-ready')

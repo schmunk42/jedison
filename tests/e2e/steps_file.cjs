@@ -1,9 +1,14 @@
 /* global actor */
 
 const waitTime = 10
+const playgroundPage = 'index.html'
 
 module.exports = function () {
   return actor({
+    _getPlaygroundUrl: function (theme) {
+      const selectedTheme = theme || process.env.THEME || 'barebones'
+      return `${playgroundPage}?theme=${selectedTheme}`
+    },
     _scrollIntoView: function (locator) {
       this.executeScript(function (locator) {
         document.querySelector(locator).scrollIntoView()

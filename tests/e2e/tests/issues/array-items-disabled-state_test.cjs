@@ -5,7 +5,7 @@ const pathToSchema = 'issue/array-items-disabled-state'
 Feature('issue if-then-else-initial-value-enforceConst')
 
 BeforeSuite(({ I }) => {
-  I.amOnPage(`playground.html?theme=${theme}`)
+  I.amOnPage(I._getPlaygroundUrl())
   I.selectOption('#examples', pathToSchema)
   I._waitForElement('.jedi-ready')
 })

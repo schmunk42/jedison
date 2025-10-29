@@ -4,7 +4,7 @@ const theme = process.env.THEME || 'barebones'
 Feature('object')
 
 Scenario('@editor @object should sort by @propertyOrder', async ({ I }) => {
-  I.amOnPage(`playground.html?theme=${theme}`)
+  I.amOnPage(I._getPlaygroundUrl())
   I.selectOption('#examples', 'editors/object-propertyOrder')
   I._waitForElement('.jedi-ready')
 

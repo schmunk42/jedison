@@ -1,11 +1,10 @@
 /* global Feature Scenario BeforeSuite */
-const theme = process.env.THEME || 'barebones'
 const pathToSchema = 'features/edit-json-data'
 
 Feature('edit-json-data')
 
 BeforeSuite(({ I }) => {
-  I.amOnPage(`playground.html?theme=${theme}`)
+  I.amOnPage(I._getPlaygroundUrl())
   I.selectOption('#examples', pathToSchema)
   I._waitForElement('.jedi-ready')
 })

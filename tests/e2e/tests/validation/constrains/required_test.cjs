@@ -4,7 +4,7 @@ const theme = process.env.THEME || 'barebones'
 Feature('required')
 
 Scenario('@constraint @required should display validation errors', ({ I }) => {
-  I.amOnPage(`playground.html?theme=${theme}`)
+  I.amOnPage(I._getPlaygroundUrl())
   I._waitForElement('.jedi-ready')
   I.selectOption('#examples', 'validator/required')
   I._waitForElement('.jedi-ready')

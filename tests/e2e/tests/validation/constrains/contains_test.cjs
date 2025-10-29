@@ -4,7 +4,7 @@ const theme = process.env.THEME || 'barebones'
 Feature('contains')
 
 Scenario('@constraint @contains should display validation errors', ({ I }) => {
-  I.amOnPage(`playground.html?theme=${theme}`)
+  I.amOnPage(I._getPlaygroundUrl())
   I._waitForElement('.jedi-ready')
   I.selectOption('#examples', 'validator/contains')
   I._waitForElement('.jedi-ready')
@@ -17,7 +17,7 @@ Scenario('@constraint @contains should display validation errors', ({ I }) => {
 })
 
 Scenario('@constraint @minContains should display validation errors', ({ I }) => {
-  I.amOnPage(`playground.html?theme=${theme}`)
+  I.amOnPage(I._getPlaygroundUrl())
   I._waitForElement('.jedi-ready')
   I.selectOption('#examples', 'validator/minContains')
   I._waitForElement('.jedi-ready')
@@ -35,7 +35,7 @@ Scenario('@constraint @minContains should display validation errors', ({ I }) =>
 })
 
 Scenario('@constraint @maxContains should display validation errors', ({ I }) => {
-  I.amOnPage(`playground.html?theme=${theme}`)
+  I.amOnPage(I._getPlaygroundUrl())
   I._waitForElement('.jedi-ready')
   I.selectOption('#examples', 'validator/maxContains')
   I._waitForElement('.jedi-ready')

@@ -35,9 +35,13 @@
     "e2e:b5": "THEME='bootstrap5' npm run e2e",
     "e2e:*": "npm run e2e && npm run e2e:b3 && npm run e2e:b4 && npm run e2e:b5",
     "e2e:grep": "SHOW=true THEME='bootstrap5' codeceptjs run -c tests/e2e/codecept.conf.cjs --steps --debug --grep '@edit-json-data'",
+    "e2e:grep:barebones": "SHOW=true THEME='barebones' codeceptjs run -c tests/e2e/codecept.conf.cjs --steps --debug --grep '@edit-json-data'",
+    "test:e2e": "start-server-and-test serve http://localhost:8181 e2e",
+    "test:e2e:grep": "start-server-and-test serve http://localhost:8181 e2e:grep",
+    "test:e2e:grep:barebones": "start-server-and-test serve http://localhost:8181 e2e:grep:barebones",
     "lint": "eslint -c ./.eslintrc.json ./src ./tests",
     "lint:fix": "eslint --fix -c ./.eslintrc.json ./src ./tests",
-    "test:full": "yarn serve & yarn e2e && yarn unit",
+    "test:full": "start-server-and-test serve http://localhost:8181 e2e && yarn unit",
     "postversion": "git push && git push --tags",
     "release": "npm publish --access public"
   },
@@ -73,6 +77,7 @@
     "json-schema-test-suite": "https://github.com/json-schema-org/JSON-Schema-Test-Suite.git",
     "puppeteer": "^13.5.2",
     "sass": "^1.77.8",
+    "start-server-and-test": "^2.1.2",
     "vite": "^6.3.5",
     "vue": "^3.5.12"
   },

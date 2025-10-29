@@ -4,7 +4,7 @@ const theme = process.env.THEME || 'barebones'
 Feature('object')
 
 Scenario('@editor @object @enforceRequired should always shor required properties in editor', async ({ I }) => {
-  I.amOnPage(`playground.html?theme=${theme}`)
+  I.amOnPage(I._getPlaygroundUrl())
   I.selectOption('#examples', 'editors/object-enforceRequired')
   I._waitForElement('.jedi-ready')
 

@@ -4,7 +4,7 @@ const theme = process.env.THEME || 'barebones'
 Feature('prefixItems')
 
 Scenario('@constraint should validate against @prefixItems', ({ I }) => {
-  I.amOnPage(`playground.html?theme=${theme}`)
+  I.amOnPage(I._getPlaygroundUrl())
   I._waitForElement('.jedi-ready')
   I.selectOption('#examples', 'validator/prefixItems')
   I._waitForElement('.jedi-ready')

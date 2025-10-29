@@ -8,7 +8,7 @@ const valueDefault = 0.5
 Feature('IMask')
 
 BeforeSuite(({ I }) => {
-  I.amOnPage(`playground.html?theme=${theme}`)
+  I.amOnPage(I._getPlaygroundUrl())
   I.selectOption('#examples', pathToSchema)
   I._waitForElement('.jedi-ready')
 })

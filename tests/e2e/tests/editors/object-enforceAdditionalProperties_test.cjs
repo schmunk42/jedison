@@ -4,7 +4,7 @@ const theme = process.env.THEME || 'barebones'
 Feature('object')
 
 Scenario('@editor @object @enforceAdditionalProperties should remove all properties that are not listed in `properties` or `patternProperties`', async ({ I }) => {
-  I.amOnPage(`playground.html?theme=${theme}`)
+  I.amOnPage(I._getPlaygroundUrl())
   I.selectOption('#examples', 'editors/object-enforceAdditionalProperties')
   I._waitForElement('.jedi-ready')
 

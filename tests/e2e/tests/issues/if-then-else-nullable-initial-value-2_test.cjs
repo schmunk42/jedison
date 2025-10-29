@@ -19,7 +19,7 @@ const data = {
 Feature('issue if-then-else-nullable-initial-value-2 - Wildlife Survey')
 
 BeforeSuite(({ I }) => {
-  I.amOnPage(`playground.html?theme=${theme}`)
+  I.amOnPage(I._getPlaygroundUrl())
   I.selectOption('#examples', pathToSchema)
   I._waitForElement('.jedi-ready')
 })

@@ -5,7 +5,7 @@ const pathToSchema = 'editors/object'
 Feature('object')
 
 BeforeSuite(({I}) => {
-  I.amOnPage(`playground.html?theme=${theme}`)
+  I.amOnPage(I._getPlaygroundUrl())
   I.selectOption('#examples', pathToSchema)
   I._waitForElement('.jedi-ready')
 });
@@ -53,7 +53,7 @@ Scenario('@editor @object @enableCollapseToggle should collapse and expand conte
 })
 
 Scenario('@editor @object @object-grid rows and columns', ({ I }) => {
-  I.amOnPage(`playground.html?theme=${theme}`)
+  I.amOnPage(I._getPlaygroundUrl())
   I.selectOption('#examples', 'editors/object-grid')
   I._waitForElement('.jedi-ready')
 
@@ -140,7 +140,7 @@ Scenario('@editor @object @object-grid rows and columns', ({ I }) => {
 })
 
 Scenario('@editor @object @object-nav-vertical', ({ I }) => {
-  I.amOnPage(`playground.html?theme=${theme}`)
+  I.amOnPage(I._getPlaygroundUrl())
   I.selectOption('#examples', 'editors/object-nav-vertical')
   I._waitForElement('.jedi-ready')
 
@@ -167,7 +167,7 @@ Scenario('@editor @object @object-nav-vertical', ({ I }) => {
 })
 
 Scenario('@editor @object @object-nav-horizontal', ({ I }) => {
-  I.amOnPage(`playground.html?theme=${theme}`)
+  I.amOnPage(I._getPlaygroundUrl())
   I.selectOption('#examples', 'editors/object-nav-horizontal')
   I._waitForElement('.jedi-ready')
 

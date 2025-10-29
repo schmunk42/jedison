@@ -4,7 +4,7 @@ const theme = process.env.THEME || 'barebones'
 Feature('Custom constraint')
 
 Scenario('should display @warning from @custom-constraint', ({ I }) => {
-  I.amOnPage(`playground.html?theme=${theme}`)
+  I.amOnPage(I._getPlaygroundUrl())
   I._waitForElement('.jedi-ready')
   I.selectOption('#examples', 'custom/custom-constraint')
   I.selectOption('#show-errors', 'always')

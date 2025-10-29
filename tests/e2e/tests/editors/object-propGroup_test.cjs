@@ -5,7 +5,7 @@ const pathToSchema = 'editors/object-propGroup'
 Feature('object x-propGroup')
 
 BeforeSuite(({I}) => {
-  I.amOnPage(`playground.html?theme=${theme}`)
+  I.amOnPage(I._getPlaygroundUrl())
   I.selectOption('#examples', pathToSchema)
   I._waitForElement('.jedi-ready')
 });
