@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jedison + React + Material-UI Demo</title>
+
+  <!-- Material-UI Fonts -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      margin-top: 0;
+      color: #1976d2;
+    }
+
+    .info {
+      background: #e3f2fd;
+      padding: 15px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      border-left: 4px solid #1976d2;
+    }
+
+    #jedison-form {
+      margin: 20px 0;
+    }
+
+    .actions {
+      margin-top: 20px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .actions button {
+      padding: 10px 20px;
+      font-size: 14px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      background: #1976d2;
+      color: white;
+      font-weight: 500;
+      transition: background 0.3s;
+    }
+
+    .actions button:hover {
+      background: #1565c0;
+    }
+
+    .actions button.secondary {
+      background: #757575;
+    }
+
+    .actions button.secondary:hover {
+      background: #616161;
+    }
+
+    .output {
+      margin-top: 20px;
+      padding: 15px;
+      background: #f5f5f5;
+      border-radius: 4px;
+      border: 1px solid #e0e0e0;
+    }
+
+    .output h3 {
+      margin-top: 0;
+      color: #424242;
+    }
+
+    .output pre {
+      background: #263238;
+      color: #aed581;
+      padding: 15px;
+      border-radius: 4px;
+      overflow-x: auto;
+      margin: 0;
+    }
+
+    .hidden-input-display {
+      margin-top: 20px;
+      padding: 15px;
+      background: #fff3e0;
+      border-radius: 4px;
+      border-left: 4px solid #ff9800;
+    }
+
+    .hidden-input-display h3 {
+      margin-top: 0;
+      color: #e65100;
+    }
+  </style>
+</head>
+<body>
+  <!-- React app root -->
+  <div id="app"></div>
+
+  <!-- Load React 18 from CDN -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+
+  <!-- Load Material-UI v5 from CDN (v5 has UMD support, v6 does not) -->
+  <script src="https://unpkg.com/@mui/material@5.16.7/umd/material-ui.production.min.js"></script>
+
+  <!-- Load Jedison -->
+  <script src="../../dist/umd/jedison.umd.js"></script>
+
+  <!-- Load Custom React MUI Editors -->
+  <script src="./editors/ReactMuiEditors.js"></script>
+
+  <!-- Load Minimal MUI Theme (adds 16px spacing between fields) -->
+  <script src="./ThemeMui.js"></script>
+
+  <!-- Load React Demo App -->
+  <script src="./JedisonDemo.js"></script>
+
+  <script>
+    // Mount the React app
+    const root = ReactDOM.createRoot(document.getElementById('app'))
+    root.render(React.createElement(JedisonDemo))
+  </script>
+</body>
+</html>

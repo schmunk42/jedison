@@ -1,0 +1,47 @@
+{
+  "title": "User Profile Form",
+  "type": "object",
+  "properties": {
+    "username": {
+      "type": "string",
+      "title": "Username",
+      "description": "Your unique username"
+    },
+    "email": {
+      "type": "string",
+      "title": "Email Address",
+      "format": "email"
+    },
+    "role": {
+      "type": "string",
+      "title": "User Role",
+      "enum": ["admin", "editor", "viewer", "guest"]
+    },
+    "settings": {
+      "type": "object",
+      "title": "Settings",
+      "properties": {
+        "notifications": {
+          "type": "boolean",
+          "title": "Enable Notifications",
+          "x-editor": "react-mui-switch"
+        },
+        "newsletter": {
+          "type": "boolean",
+          "title": "Subscribe to Newsletter"
+        },
+        "theme": {
+          "type": "string",
+          "title": "Preferred Theme",
+          "enum": ["light", "dark", "auto"]
+        }
+      }
+    },
+    "bio": {
+      "type": "string",
+      "title": "Biography",
+      "description": "Tell us about yourself"
+    }
+  },
+  "required": ["username", "email", "role"]
+}
