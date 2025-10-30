@@ -15,7 +15,8 @@ class EditorArrayNav extends EditorArray {
   }
 
   addEventListeners () {
-    this.control.addBtn.addEventListener('click', () => {
+    this.control.addBtn.addEventListener('click', (e) => {
+      e.preventDefault()
       this.activeItemIndex = this.instance.value.length
       this.instance.addItem('user')
     })
@@ -95,7 +96,8 @@ class EditorArrayNav extends EditorArray {
 
       arrayActions.appendChild(btnGroup)
 
-      const clickHandler = () => {
+      const clickHandler = (e) => {
+        e.preventDefault()
         this.activeItemIndex = index
       }
 

@@ -28,7 +28,8 @@ class EditorArrayTableObject extends EditorArray {
   }
 
   addEventListeners () {
-    this.control.addBtn.addEventListener('click', () => {
+    this.control.addBtn.addEventListener('click', (e) => {
+      e.preventDefault()
       this.activeItemIndex = this.instance.value.length
       this.instance.addItem('user')
     })

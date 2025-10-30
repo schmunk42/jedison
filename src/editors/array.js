@@ -41,7 +41,8 @@ class EditorArray extends Editor {
   }
 
   addEventListeners () {
-    this.control.addBtn.addEventListener('click', () => {
+    this.control.addBtn.addEventListener('click', (e) => {
+      e.preventDefault()
       this.instance.addItem('user')
     })
 
@@ -49,7 +50,8 @@ class EditorArray extends Editor {
   }
 
   addJsonDataEventListeners () {
-    this.control.jsonData.saveBtn.addEventListener('click', () => {
+    this.control.jsonData.saveBtn.addEventListener('click', (e) => {
+      e.preventDefault()
       try {
         const inputValue = JSON.parse(this.control.jsonData.input.value)
         this.instance.setValue(inputValue, true, 'user')
@@ -60,7 +62,8 @@ class EditorArray extends Editor {
       }
     })
 
-    this.control.jsonData.toggle.addEventListener('click', () => {
+    this.control.jsonData.toggle.addEventListener('click', (e) => {
+      e.preventDefault()
       this.refreshJsonDataInputSize()
     })
   }
@@ -101,7 +104,8 @@ class EditorArray extends Editor {
 
     const btnGroup = this.theme.getBtnGroup()
 
-    deleteBtn.addEventListener('click', () => {
+    deleteBtn.addEventListener('click', (e) => {
+      e.preventDefault()
       const confirmDeletion = window.confirm(this.instance.jedison.translator.translate('arrayConfirmDelete'))
 
       if (confirmDeletion) {
@@ -110,13 +114,15 @@ class EditorArray extends Editor {
       }
     })
 
-    moveUpBtn.addEventListener('click', () => {
+    moveUpBtn.addEventListener('click', (e) => {
+      e.preventDefault()
       const toIndex = index - 1
       this.activeItemIndex = toIndex
       this.instance.move(index, toIndex, 'user')
     })
 
-    moveDownBtn.addEventListener('click', () => {
+    moveDownBtn.addEventListener('click', (e) => {
+      e.preventDefault()
       const toIndex = index + 1
       this.activeItemIndex = toIndex
       this.instance.move(index, toIndex, 'user')
