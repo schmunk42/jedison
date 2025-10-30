@@ -24,6 +24,7 @@ import { bootstrapIcons, fontAwesome3, fontAwesome4, fontAwesome5, fontAwesome6,
 import UiResolver from './ui-resolver.js'
 import Translator from './i18n/translator.js'
 import JsonWalker from './json-walker.js'
+import { BUILD_ID } from './build-id.js'
 
 /**
  * Represents a Jedison instance.
@@ -37,6 +38,8 @@ class Jedison extends EventEmitter {
    */
   constructor (options) {
     super()
+
+    this.buildId = BUILD_ID
 
     this.options = Object.assign({
       container: null,
@@ -658,6 +661,10 @@ class Jedison extends EventEmitter {
     Object.keys(this).forEach((key) => {
       delete this[key]
     })
+  }
+
+  static getBuildId () {
+    return BUILD_ID
   }
 }
 

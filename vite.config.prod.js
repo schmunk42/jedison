@@ -1,7 +1,9 @@
 import { defineConfig } from 'vite'
 import { resolve } from 'path'
+import { generateBuildIdPlugin } from './scripts/generate-build-id.js'
 
 export default defineConfig({
+  plugins: [generateBuildIdPlugin()],
   build: {
     copyPublicDir: false,
     lib: {
@@ -29,7 +31,8 @@ export default defineConfig({
           name: 'Jedison',
           entryFileNames: 'jedison.umd.js',
           dir: resolve(__dirname, './dist/umd'),
-          sourcemap: true
+          sourcemap: true,
+          exports: 'default'
         }
       ]
     },

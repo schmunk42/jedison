@@ -3,12 +3,14 @@ import vue from '@vitejs/plugin-vue'
 import { resolve } from 'path'
 import { existsSync } from 'fs'
 import { join } from 'path'
+import { generateBuildIdPlugin } from './scripts/generate-build-id.js'
 
 export default defineConfig({
   // Use MPA mode to disable SPA fallback
   appType: 'mpa',
   plugins: [
     vue(),
+    generateBuildIdPlugin(),
     {
       name: 'custom-404-handler',
       configureServer(server) {

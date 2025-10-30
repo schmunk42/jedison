@@ -8,6 +8,7 @@ import ThemeBootstrap3 from './themes/bootstrap3.js'
 import ThemeBootstrap4 from './themes/bootstrap4.js'
 import ThemeBootstrap5 from './themes/bootstrap5.js'
 import Editor from './editors/editor.js'
+import { BUILD_ID } from './build-id.js'
 import EditorBoolean from './editors/boolean.js'
 import EditorBooleanRadios from './editors/boolean-radios.js'
 import EditorBooleanSelect from './editors/boolean-select.js'
@@ -67,5 +68,6 @@ export default {
   ThemeBootstrap5,
   RefParser,
   Create,
-  SchemaGenerator
+  SchemaGenerator,
+  BUILD_ID
 }
