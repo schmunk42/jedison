@@ -13,7 +13,11 @@ export function clone (thing) {
     return undefined
   }
 
-  return JSON.parse(JSON.stringify(thing))
+  try {
+    return structuredClone(thing)
+  } catch {
+    return JSON.parse(JSON.stringify(thing))
+  }
 }
 
 /**
@@ -68,19 +72,36 @@ export function sortObject (obj) {
 }
 
 /**
- * Returns true if the two values passed are equal
+ * Returns true if the two values passed are equal.
+ * Recursive deep comparison — order-independent for object keys,
+ * order-dependent for arrays. No sorting or JSON.stringify needed.
  * @param {*} a - Value A
  * @param {*} b - Value B
  * @return {boolean}
  */
 export function equal (a, b) {
   if (a === b) return true
+  if (typeof a !== typeof b) return false
+  if (typeof a !== 'object' || a === null || b === null) return false
 
-  if (isObject(a) && isObject(b)) {
-    a = sortObject(a)
-    b = sortObject(b)
+  if (isArray(a)) {
+    if (!isArray(b) || a.length !== b.length) return false
+    for (let i = 0; i < a.length; i++) {
+      if (!equal(a[i], b[i])) return false
+    }
+    return true
   }
-  return JSON.stringify(a) === JSON.stringify(b)
+
+  if (isArray(b)) return false
+
+  const keysA = Object.keys(a)
+  const keysB = Object.keys(b)
+  if (keysA.length !== keysB.length) return false
+
+  for (const key of keysA) {
+    if (!hasOwn(b, key) || !equal(a[key], b[key])) return false
+  }
+  return true
 }
 
 /**

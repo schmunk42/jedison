@@ -1,5 +1,5 @@
 import Instance from './instance.js'
-import { different, isSet, notSet, isObject, hasOwn, clone, isNumber } from '../helpers/utils.js'
+import { different, equal, isSet, notSet, isObject, hasOwn, clone, isNumber } from '../helpers/utils.js'
 import {
   getSchemaAdditionalProperties,
   getSchemaDependentRequired,
@@ -160,7 +160,7 @@ class InstanceObject extends Instance {
       instance.deactivate()
     }
 
-    this.onChildChange()
+    this.onChildChange(undefined, true)
 
     return instance
   }
@@ -171,7 +171,7 @@ class InstanceObject extends Instance {
       if (instance.getKey() === key) {
         instance.destroy()
         this.children.splice(i, 1)
-        this.onChildChange()
+        this.onChildChange(undefined, true)
       }
     }
   }
@@ -214,7 +214,8 @@ class InstanceObject extends Instance {
     return schema
   }
 
-  onChildChange (initiator) {
+  onChildChange (initiator, force) {
+    if (this._refreshing) return
     const value = {}
 
     this.children.forEach((child) => {
@@ -223,14 +224,16 @@ class InstanceObject extends Instance {
 
         if (propertyName === '__proto__') {
           Object.defineProperty(value, propertyName, {
-            value: child.getValue(),
+            value: child.getValueRaw(),
             enumerable: true
           })
         } else {
-          value[propertyName] = child.getValue()
+          value[propertyName] = child.getValueRaw()
         }
       }
     })
+
+    if (!force && equal(this.value, value)) return
 
     this.value = value
     this.jedison.emit('instance-change', this, initiator)
@@ -279,13 +282,16 @@ class InstanceObject extends Instance {
       return
     }
 
+    this._refreshing = true
+    try {
+
     Object.keys(value).forEach((propertyName) => {
       const child = this.getChild(propertyName)
 
       // If a value has already a child instance
       if (child) {
         child.activate()
-        const oldValue = child.getValue()
+        const oldValue = child.getValueRaw()
         const newValue = value[child.getKey()]
 
         // update child value if the old value and the new value are different
@@ -317,8 +323,26 @@ class InstanceObject extends Instance {
 
     this.sortChildrenByPropertyOrder()
 
-    // Update the object's value with the corrected values after constraint enforcement
-    this.value = value
+    // Rebuild value from children to ensure consistent key order
+    // (same as onChildChange but without emitting events)
+    const finalValue = {}
+    this.children.forEach((child) => {
+      if (child.isActive) {
+        const propertyName = child.getKey()
+        if (propertyName === '__proto__') {
+          Object.defineProperty(finalValue, propertyName, {
+            value: child.getValueRaw(),
+            enumerable: true
+          })
+        } else {
+          finalValue[propertyName] = child.getValueRaw()
+        }
+      }
+    })
+    this.value = finalValue
+    } finally {
+      this._refreshing = false
+    }
   }
 }
 

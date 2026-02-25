@@ -35,6 +35,8 @@ class InstanceIfThenElse extends Instance {
     this.schemas = []
     this.ifThenElseSchemas = []
 
+    this._changingValue = false
+    this._fittestCache = { key: undefined, index: undefined }
     this.traverseSchema(this.schema)
 
     delete this.schema.if
@@ -89,60 +91,74 @@ class InstanceIfThenElse extends Instance {
   }
 
   changeValue (value, initiator = 'api') {
-    const withoutIf = this.getWithoutIfValueFromValue(value)
-    const fittestIndex = this.getFittestIndex(withoutIf)
-    const indexChanged = fittestIndex !== this.index
-    this.index = fittestIndex
-    this.activeInstance = this.instances[fittestIndex]
-    this.activeInstance.register()
+    if (this._changingValue) return
+    this._changingValue = true
+    try {
+      const withoutIf = this.getWithoutIfValueFromValue(value)
+      const fittestIndex = this.getFittestIndex(withoutIf)
+      const indexChanged = fittestIndex !== this.index
+      this.index = fittestIndex
+      this.activeInstance = this.instances[fittestIndex]
+      this.activeInstance.register()
 
-    this.instances.forEach((instance, index) => {
-      instance.off('notifyParent')
+      this.instances.forEach((instance, index) => {
+        instance.off('notifyParent')
 
-      if (instance.children && isObject(value)) {
-        instance.children.forEach((child) => {
-          const shouldUpdateValue = child.isMultiple && hasOwn(value, child.getKey())
+        const isActive = index === fittestIndex
 
-          if (shouldUpdateValue) {
-            child.setValue(value[child.getKey()], true, 'api')
+        // Only update Multiple children on the active instance
+        if (isActive && instance.children && isObject(value)) {
+          instance.children.forEach((child) => {
+            const shouldUpdateValue = child.isMultiple && hasOwn(value, child.getKey())
+
+            if (shouldUpdateValue) {
+              child.setValue(value[child.getKey()], true, 'api')
+            }
+          })
+        }
+
+        // Only call setValue on the active instance, or on all instances
+        // when the index just changed (to sync the newly-active branch)
+        if (isActive || indexChanged) {
+          const startingValue = this.instanceStartingValues[index]
+          const currentValue = instance.getValue()
+          let instanceValue = value
+
+          if (isObject(startingValue) && isObject(value)) {
+            if (indexChanged) {
+              instanceValue = overwriteExistingProperties(startingValue, withoutIf)
+              this.jedison.updateInstancesWatchedData()
+            } else {
+              instanceValue = overwriteExistingProperties(currentValue, value)
+            }
+
+            if (initiator === 'api') {
+              instanceValue = overwriteExistingProperties(currentValue, value)
+            }
           }
+
+          instance.setValue(instanceValue, false, initiator)
+        }
+
+        // notifyParent handler is needed on ALL instances (for branch switching)
+        instance.on('notifyParent', (initiator) => {
+          const value = instance.getValue()
+          this.changeValue(value, initiator)
+          this.emit('notifyParent', initiator)
+          this.emit('change', initiator)
         })
-      }
-
-      const startingValue = this.instanceStartingValues[index]
-      const currentValue = instance.getValue()
-      let instanceValue = value
-
-      if (isObject(startingValue) && isObject(value)) {
-        if (indexChanged) {
-          instanceValue = overwriteExistingProperties(startingValue, withoutIf)
-          this.jedison.updateInstancesWatchedData()
-        } else {
-          instanceValue = overwriteExistingProperties(currentValue, value)
-        }
-
-        if (initiator === 'api') {
-          instanceValue = overwriteExistingProperties(currentValue, value)
-        }
-      }
-
-      instance.setValue(instanceValue, false, initiator)
-
-      instance.on('notifyParent', (initiator) => {
-        const value = instance.getValue()
-        this.changeValue(value, initiator)
-        this.emit('notifyParent', initiator)
-        this.emit('change', initiator)
       })
-    })
 
-    // Ensure active instance processes the value again for nullable editors
-    // Only apply secondary setValue if we have nullable fields that might need it
-    if (initiator === 'api' && this.hasNullableFields(this.activeInstance)) {
-      this.activeInstance.setValue(value, false, 'secondary')
+      // Ensure active instance processes the value again for nullable editors
+      // Only apply secondary setValue if we have nullable fields that might need it
+      if (initiator === 'api' && this.hasNullableFields(this.activeInstance)) {
+        this.activeInstance.setValue(value, false, 'secondary')
+      }
+
+      this.value = this.activeInstance.getValueRaw()
+    } finally {
+      this._changingValue = false
     }
-
-    this.value = this.activeInstance.getValue()
   }
 
   getWithoutIfValueFromValue (value) {
@@ -219,9 +235,37 @@ class InstanceIfThenElse extends Instance {
   }
 
   /**
-   * Returns the index of the instance that has less validation errors
+   * Returns the index of the instance that has less validation errors.
+   * Results are cached based on the discriminator property values from
+   * the if-schema so that repeated calls with the same effective input
+   * skip the expensive temporary Jedison creation.
    */
   getFittestIndex (value) {
+    // Build a cache key from the properties referenced in the if-schema
+    let cacheKey
+    try {
+      if (isObject(value)) {
+        const ifProps = this._getIfPropertyNames()
+        if (ifProps) {
+          const subset = {}
+          for (const p of ifProps) {
+            if (hasOwn(value, p)) subset[p] = value[p]
+          }
+          cacheKey = JSON.stringify(subset)
+        } else {
+          cacheKey = JSON.stringify(value)
+        }
+      } else {
+        cacheKey = JSON.stringify(value)
+      }
+    } catch {
+      cacheKey = undefined
+    }
+
+    if (cacheKey !== undefined && cacheKey === this._fittestCache.key) {
+      return this._fittestCache.index
+    }
+
     let fittestIndex = this.index
 
     this.ifThenElseSchemas.forEach((schema, index) => {
@@ -255,7 +299,31 @@ class InstanceIfThenElse extends Instance {
       }
     })
 
+    this._fittestCache = { key: cacheKey, index: fittestIndex }
     return fittestIndex
+  }
+
+  /**
+   * Extracts property names from the if-schema for cache key computation.
+   * Returns null if the if-schema structure is too complex to extract keys.
+   */
+  _getIfPropertyNames () {
+    if (!this._ifPropNames) {
+      const names = new Set()
+      for (const schema of this.ifThenElseSchemas) {
+        if (isObject(schema.if) && isObject(schema.if.properties)) {
+          for (const key of Object.keys(schema.if.properties)) {
+            names.add(key)
+          }
+        } else if (schema.if !== true && schema.if !== false) {
+          // Complex if-schema — fall back to full stringify
+          this._ifPropNames = null
+          return null
+        }
+      }
+      this._ifPropNames = names.size > 0 ? [...names] : null
+    }
+    return this._ifPropNames
   }
 
   hasNestedValidationErrors () {

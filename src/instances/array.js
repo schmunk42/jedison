@@ -1,5 +1,5 @@
 import Instance from './instance.js'
-import { isSet, clone, isArray } from '../helpers/utils.js'
+import { isSet, clone, isArray, equal } from '../helpers/utils.js'
 import {
   getSchemaDefault,
   getSchemaItems,
@@ -68,7 +68,7 @@ class InstanceArray extends Instance {
   }
 
   move (fromIndex, toIndex, initiator) {
-    const value = clone(this.getValue())
+    const value = clone(this.value)
 
     if (!isArray(value)) {
       return
@@ -84,7 +84,7 @@ class InstanceArray extends Instance {
 
   addItem (initiator) {
     const tempEditor = this.createItemInstance()
-    let value = clone(this.getValue())
+    let value = clone(this.value)
 
     if (!isArray(value)) {
       value = []
@@ -99,7 +99,7 @@ class InstanceArray extends Instance {
   }
 
   deleteItem (itemIndex, initiator) {
-    const currentValue = clone(this.getValue())
+    const currentValue = clone(this.value)
 
     if (!isArray(currentValue)) {
       return
@@ -112,11 +112,14 @@ class InstanceArray extends Instance {
   }
 
   onChildChange (initiator) {
+    if (this._refreshing) return
     const value = []
 
     this.children.forEach((child) => {
-      value.push(child.getValue())
+      value.push(child.getValueRaw())
     })
+
+    if (equal(this.value, value)) return
 
     this.value = value
     this.jedison.emit('instance-change', this, initiator)
@@ -133,16 +136,21 @@ class InstanceArray extends Instance {
       return
     }
 
-    const correctedValues = []
-    value.forEach((itemValue, index) => {
-      const child = this.createItemInstance(index)
-      this.children.push(child)
-      const finalValue = child.setValue(itemValue, false)
-      correctedValues.push(finalValue)
-    })
+    this._refreshing = true
+    try {
+      const correctedValues = []
+      value.forEach((itemValue, index) => {
+        const child = this.createItemInstance(index)
+        this.children.push(child)
+        const finalValue = child.setValue(itemValue, false)
+        correctedValues.push(finalValue)
+      })
 
-    // Update the array's value with constraint-enforced values
-    this.value = correctedValues
+      // Update the array's value with constraint-enforced values
+      this.value = correctedValues
+    } finally {
+      this._refreshing = false
+    }
   }
 }
 

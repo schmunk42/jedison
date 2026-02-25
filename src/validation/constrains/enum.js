@@ -6,7 +6,8 @@ export function _enum (context) {
   const schemaEnum = getSchemaEnum(context.schema)
 
   if (isSet(schemaEnum)) {
-    const invalid = !schemaEnum.some(e => JSON.stringify(context.value) === JSON.stringify(e))
+    const valueStr = JSON.stringify(context.value)
+    const invalid = !schemaEnum.some(e => valueStr === JSON.stringify(e))
 
     if (invalid) {
       errors.push({

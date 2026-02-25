@@ -250,7 +250,7 @@ class Instance extends EventEmitter {
 
     if (instance) {
       this.watched[name] = {
-        value: instance.getValue(),
+        value: instance.getValueRaw(),
         schema: instance.getSchema(),
         properties: instance.schema.properties ? Object.keys(instance.schema.properties) : []
       }
@@ -274,6 +274,14 @@ class Instance extends EventEmitter {
    */
   getValue () {
     return clone(this.value)
+  }
+
+  /**
+   * Returns the value without cloning. Use only when the caller
+   * will not mutate the returned value.
+   */
+  getValueRaw () {
+    return this.value
   }
 
   /**
@@ -381,7 +389,7 @@ class Instance extends EventEmitter {
       return []
     }
 
-    const errors = this.jedison.validator.getErrors(this.getValue(), this.originalSchema, this.getKey(), this.path)
+    const errors = this.jedison.validator.getErrors(this.value, this.originalSchema, this.getKey(), this.path)
     return removeDuplicatesFromArray(errors)
   }
 

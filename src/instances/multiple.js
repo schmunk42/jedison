@@ -28,6 +28,7 @@ class InstanceMultiple extends Instance {
     this.switcherOptionValues = []
     this.switcherOptionsLabels = []
     this.isMultiple = true
+    this._fittestCache = { key: undefined, index: undefined }
 
     this.on('set-value', () => {
       this.onSetValue()
@@ -124,7 +125,7 @@ class InstanceMultiple extends Instance {
       instance.off('notifyParent')
 
       instance.on('notifyParent', (initiator) => {
-        this.value = this.activeInstance.getValue()
+        this.value = this.activeInstance.getValueRaw()
         this.emit('notifyParent', initiator)
         this.emit('change', initiator)
       })
@@ -146,20 +147,33 @@ class InstanceMultiple extends Instance {
       this.activeInstance.setValue(value, false, initiator)
     }
 
-    this.setValue(this.activeInstance.getValue(), true, initiator)
+    this.setValue(this.activeInstance.getValueRaw(), true, initiator)
   }
 
   onSetValue () {
-    if (different(this.activeInstance.getValue(), this.value)) {
+    if (different(this.activeInstance.getValueRaw(), this.value)) {
       const fittestIndex = this.getFittestIndex(this.value)
       this.switchInstance(fittestIndex, this.value)
     }
   }
 
   /**
-   * Returns the index of the instance that has less validation errors
+   * Returns the index of the instance that has less validation errors.
+   * Results are cached by JSON.stringify(value) so repeated calls with
+   * the same value skip the expensive temporary Jedison creation.
    */
   getFittestIndex (value) {
+    let cacheKey
+    try {
+      cacheKey = JSON.stringify(value)
+    } catch {
+      cacheKey = undefined
+    }
+
+    if (cacheKey !== undefined && cacheKey === this._fittestCache.key) {
+      return this._fittestCache.index
+    }
+
     let fittestIndex
     let championErrors
 
@@ -181,6 +195,7 @@ class InstanceMultiple extends Instance {
       }
     }
 
+    this._fittestCache = { key: cacheKey, index: fittestIndex }
     return fittestIndex
   }
 

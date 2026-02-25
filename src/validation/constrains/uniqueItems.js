@@ -6,7 +6,7 @@ export function uniqueItems (context) {
   const uniqueItems = getSchemaUniqueItems(context.schema)
 
   if (isArray(context.value) && isSet(uniqueItems) && uniqueItems === true) {
-    const seen = []
+    const seen = new Set()
     let hasDuplicatedItems = false
 
     for (let i = 0; i < context.value.length; i++) {
@@ -17,12 +17,12 @@ export function uniqueItems (context) {
       }
 
       const itemStringified = JSON.stringify(item)
-      hasDuplicatedItems = seen.some((seen) => seen === itemStringified)
+      hasDuplicatedItems = seen.has(itemStringified)
 
       if (hasDuplicatedItems) {
         break
       } else {
-        seen.push(itemStringified)
+        seen.add(itemStringified)
       }
     }
 

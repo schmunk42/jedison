@@ -6,7 +6,7 @@ export function getSchemaX (schema, keyword) {
 }
 
 export function getSchemaSchema (schema) {
-  return isString(schema.$schema) ? clone(schema.$schema) : undefined
+  return isString(schema.$schema) ? schema.$schema : undefined
 }
 
 export function getSchemaAdditionalProperties (schema) {
@@ -46,7 +46,7 @@ export function getSchemaDependentSchemas (schema) {
 }
 
 export function getSchemaDescription (schema) {
-  return isString(schema.description) ? clone(schema.description) : undefined
+  return isString(schema.description) ? schema.description : undefined
 }
 
 export function getSchemaElse (schema) {
@@ -62,7 +62,7 @@ export function getSchemaEnum (schema) {
 }
 
 export function getSchemaExclusiveMaximum (schema) {
-  return isNumber(schema.exclusiveMaximum) ? clone(schema.exclusiveMaximum) : undefined
+  return isNumber(schema.exclusiveMaximum) ? schema.exclusiveMaximum : undefined
 }
 
 export function getSchemaExclusiveMinimum (schema) {
@@ -70,7 +70,7 @@ export function getSchemaExclusiveMinimum (schema) {
 }
 
 export function getSchemaFormat (schema) {
-  return isString(schema.format) ? clone(schema.format) : undefined
+  return isString(schema.format) ? schema.format : undefined
 }
 
 export function getSchemaIf (schema) {
@@ -79,7 +79,7 @@ export function getSchemaIf (schema) {
   }
 
   if (isBoolean(schema.if)) {
-    return clone(schema.if)
+    return schema.if
   }
 
   return undefined
@@ -90,12 +90,12 @@ export function getSchemaItems (schema) {
 }
 
 export function getSchemaMaximum (schema) {
-  return isNumber(schema.maximum) ? clone(schema.maximum) : undefined
+  return isNumber(schema.maximum) ? schema.maximum : undefined
 }
 
 export function getSchemaMaxContains (schema) {
   if (isInteger(schema.maxContains) && schema.maxContains >= 0) {
-    return clone(schema.maxContains)
+    return schema.maxContains
   }
 
   return undefined
@@ -103,7 +103,7 @@ export function getSchemaMaxContains (schema) {
 
 export function getSchemaMaxItems (schema) {
   if (isInteger(schema.maxItems) && schema.maxItems >= 0) {
-    return clone(schema.maxItems)
+    return schema.maxItems
   }
 
   return undefined
@@ -111,7 +111,7 @@ export function getSchemaMaxItems (schema) {
 
 export function getSchemaMaxLength (schema) {
   if (isInteger(schema.maxLength) && schema.maxLength >= 0) {
-    return clone(schema.maxLength)
+    return schema.maxLength
   }
 
   return undefined
@@ -119,19 +119,19 @@ export function getSchemaMaxLength (schema) {
 
 export function getSchemaMaxProperties (schema) {
   if (isInteger(schema.maxProperties)) {
-    return clone(schema.maxProperties)
+    return schema.maxProperties
   }
 
   return undefined
 }
 
 export function getSchemaMinimum (schema) {
-  return isNumber(schema.minimum) ? clone(schema.minimum) : undefined
+  return isNumber(schema.minimum) ? schema.minimum : undefined
 }
 
 export function getSchemaMinContains (schema) {
   if (isInteger(schema.minContains) && schema.minContains >= 0) {
-    return clone(schema.minContains)
+    return schema.minContains
   }
 
   return undefined
@@ -139,7 +139,7 @@ export function getSchemaMinContains (schema) {
 
 export function getSchemaMinItems (schema) {
   if (isInteger(schema.minItems) && schema.minItems >= 0) {
-    return clone(schema.minItems)
+    return schema.minItems
   }
 
   return undefined
@@ -147,7 +147,7 @@ export function getSchemaMinItems (schema) {
 
 export function getSchemaMinLength (schema) {
   if (isInteger(schema.minLength) && schema.minLength >= 0) {
-    return clone(schema.minLength)
+    return schema.minLength
   }
 
   return undefined
@@ -155,7 +155,7 @@ export function getSchemaMinLength (schema) {
 
 export function getSchemaMinProperties (schema) {
   if (isInteger(schema.minProperties) && schema.minProperties >= 0) {
-    return clone(schema.minProperties)
+    return schema.minProperties
   }
 
   return undefined
@@ -163,7 +163,7 @@ export function getSchemaMinProperties (schema) {
 
 export function getSchemaMultipleOf (schema) {
   if (isNumber(schema.multipleOf) && schema.multipleOf >= 0) {
-    return clone(schema.multipleOf)
+    return schema.multipleOf
   }
 
   return undefined
@@ -184,7 +184,7 @@ export function getSchemaXOption (schema, option) {
 }
 
 export function getSchemaPattern (schema) {
-  return isString(schema.pattern) ? clone(schema.pattern) : undefined
+  return isString(schema.pattern) ? schema.pattern : undefined
 }
 
 export function getSchemaPatternProperties (schema) {
@@ -200,7 +200,7 @@ export function getSchemaProperties (schema) {
 }
 
 export function getSchemaReadOnly (schema) {
-  return isBoolean(schema.readOnly) ? clone(schema.readOnly) : undefined
+  return isBoolean(schema.readOnly) ? schema.readOnly : undefined
 }
 
 export function getSchemaRequired (schema) {
@@ -212,11 +212,15 @@ export function getSchemaThen (schema) {
 }
 
 export function getSchemaTitle (schema) {
-  return isString(schema.title) ? clone(schema.title) : undefined
+  return isString(schema.title) ? schema.title : undefined
 }
 
 export function getSchemaType (schema) {
-  if (isString(schema.type) || isArray(schema.type)) {
+  if (isString(schema.type)) {
+    return schema.type
+  }
+
+  if (isArray(schema.type)) {
     return clone(schema.type)
   }
 
@@ -228,11 +232,11 @@ export function getSchemaOneOf (schema) {
 }
 
 export function getSchemaUnevaluatedProperties (schema) {
-  return isBoolean(schema.unevaluatedProperties) ? clone(schema.unevaluatedProperties) : undefined
+  return isBoolean(schema.unevaluatedProperties) ? schema.unevaluatedProperties : undefined
 }
 
 export function getSchemaUniqueItems (schema) {
-  return isBoolean(schema.uniqueItems) ? clone(schema.uniqueItems) : undefined
+  return isBoolean(schema.uniqueItems) ? schema.uniqueItems : undefined
 }
 
 export default {

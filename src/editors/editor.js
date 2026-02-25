@@ -67,8 +67,16 @@ class Editor {
     }
 
     const valueChangeHandler = () => {
-      this.refreshUI()
-      this.showValidationErrors(this.instance.getErrors())
+      if (!this._changePending) {
+        this._changePending = true
+        queueMicrotask(() => {
+          this._changePending = false
+          if (this.instance) {
+            this.refreshUI()
+            this.showValidationErrors(this.instance.getErrors())
+          }
+        })
+      }
     }
 
     this.instance.on('change', valueChangeHandler)
@@ -415,7 +423,7 @@ class Editor {
    */
   refreshJsonData () {
     if (this.control && this.control.jsonData && this.control.jsonData.input) {
-      this.control.jsonData.input.value = JSON.stringify(this.instance.getValue(), null, 2)
+      this.control.jsonData.input.value = JSON.stringify(this.instance.getValueRaw(), null, 2)
     }
   }
 
